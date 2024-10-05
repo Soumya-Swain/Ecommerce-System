@@ -17,8 +17,12 @@ public class CustomerController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerCustomer(@RequestBody Customer customer) throws Exception {
-        Customer newCustomer = customerService.registerCustomer(customer);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newCustomer);
+        try {
+            Customer newCustomer = customerService.registerCustomer(customer);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newCustomer);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/validate")
