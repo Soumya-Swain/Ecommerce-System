@@ -31,12 +31,12 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<Page<Product>> getProducts(@RequestParam Optional<String> name,
-                                     @RequestParam Optional<String> category,
-                                     @RequestParam(defaultValue = "0") int pageNumber,
-                                     @RequestParam(defaultValue = "1") int size
-                                     ){
-        Pageable page = PageRequest.of(pageNumber,size);
-        Page<Product> products = productService.getProducts(name.orElse(""), category.orElse(""),page );
+                                                     @RequestParam Optional<String> category,
+                                                     @RequestParam(defaultValue = "0") int pageNumber,
+                                                     @RequestParam(defaultValue = "1") int size
+    ) {
+        Pageable page = PageRequest.of(pageNumber, size);
+        Page<Product> products = productService.getProducts(name.orElse(""), category.orElse(""), page);
         if (products.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -45,10 +45,18 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getProductById(@PathVariable UUID id){
+    public ResponseEntity<?> getProductById(@PathVariable UUID id) {
         return productService.getProductById(id).map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(404).build());
-
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateProduct(@PathVariable UUID id,@Valid @RequestBody Product updtedProduct) throws Exception {
+        return productService.updateProduct(id,updtedProduct).map(product->ResponseEntity.ok(product)).orElse(ResponseEntity.status(404).build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable UUID id){
+        return productService.deleteProduct(id);
+    }
 }
