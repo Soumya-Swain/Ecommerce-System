@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class OrderService {
@@ -59,5 +60,13 @@ public class OrderService {
         }
         else
             return new ResponseEntity<>("Customer Not Found", HttpStatus.NOT_FOUND);
+    }
+
+    public ResponseEntity<?>  getOrderById(UUID id){
+        Optional<Order> order = orderRepository.findById(id);
+        if (order.isPresent())
+            return ResponseEntity.ok(order);
+        else
+            return ResponseEntity.notFound().build();
     }
 }
