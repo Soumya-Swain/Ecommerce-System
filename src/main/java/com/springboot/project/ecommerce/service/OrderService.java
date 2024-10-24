@@ -1,12 +1,10 @@
 package com.springboot.project.ecommerce.service;
 
-import com.springboot.project.ecommerce.dto.OrderItemDTO;
 import com.springboot.project.ecommerce.dto.OrderRequestDTO;
 import com.springboot.project.ecommerce.entity.Order;
 import com.springboot.project.ecommerce.entity.OrderItem;
 import com.springboot.project.ecommerce.entity.Product;
 import com.springboot.project.ecommerce.repository.CustomerRepository;
-import com.springboot.project.ecommerce.repository.OrderItemRepository;
 import com.springboot.project.ecommerce.repository.OrderRepository;
 import com.springboot.project.ecommerce.repository.ProductRepository;
 import jakarta.transaction.Transactional;
@@ -57,16 +55,32 @@ public class OrderService {
             order.setItems(orderItems);
             order.setTotalAmount(totalAmount);
             return ResponseEntity.ok(orderRepository.save(order));
-        }
-        else
+        } else
             return new ResponseEntity<>("Customer Not Found", HttpStatus.NOT_FOUND);
     }
 
-    public ResponseEntity<?>  getOrderById(UUID id){
+    public ResponseEntity<?> getOrderById(UUID id) {
         Optional<Order> order = orderRepository.findById(id);
         if (order.isPresent())
             return ResponseEntity.ok(order);
         else
             return ResponseEntity.notFound().build();
+    }
+
+    public ResponseEntity<?> getOrderByCustomerId(Long customerId) {
+        List<Order> order = orderRepository.findByCustomerIdOrderByOrderDateDesc(customerId);
+        if (!order.isEmpty())
+            return ResponseEntity.ok(orderRepository.findByCustomerIdOrderByOrderDateDesc(customerId));
+        else
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Customer Not Found");
+    }
+
+    public ResponseEntity<?> updateOrderStatus(UUID id, String status) {
+        Optional<Order> order = orderRepository.findById(id);
+        if (order.isPresent()) {
+            order.get().setStatus(status);
+            return ResponseEntity.ok(orderRepository.save(order.get()));
+        } else
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order Not Found");
     }
 }

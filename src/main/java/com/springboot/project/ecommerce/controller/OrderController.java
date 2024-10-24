@@ -1,10 +1,8 @@
 package com.springboot.project.ecommerce.controller;
 
 import com.springboot.project.ecommerce.dto.OrderRequestDTO;
-import com.springboot.project.ecommerce.entity.Order;
 import com.springboot.project.ecommerce.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,5 +21,13 @@ public class OrderController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getOrderById(@PathVariable UUID id){
         return orderService.getOrderById(id);
+    }
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<?> getOrderByCustomerId(@PathVariable Long customerId){
+        return orderService.getOrderByCustomerId(customerId);
+    }
+    @PutMapping("/{id}/status")
+    public ResponseEntity<?> updateOrderStatus(@PathVariable UUID id, @RequestBody String status){
+        return orderService.updateOrderStatus(id,status);
     }
 }

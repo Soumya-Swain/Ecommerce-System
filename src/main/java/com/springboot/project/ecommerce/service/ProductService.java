@@ -2,16 +2,12 @@ package com.springboot.project.ecommerce.service;
 
 import com.springboot.project.ecommerce.entity.Product;
 import com.springboot.project.ecommerce.repository.ProductRepository;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
