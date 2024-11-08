@@ -8,6 +8,8 @@ import com.springboot.project.ecommerce.repository.CustomerRepository;
 import com.springboot.project.ecommerce.repository.OrderRepository;
 import com.springboot.project.ecommerce.repository.ProductRepository;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +30,11 @@ public class OrderService {
     @Autowired
     CustomerRepository customerRepository;
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(OrderService.class);
+
     @Transactional
     public ResponseEntity<?> placeOrder(OrderRequestDTO orderRequestDTO) {
+        LOGGER.info("Place Order", orderRequestDTO);
         if (customerRepository.findByid(orderRequestDTO.getCustomerId()).isPresent()) {
             BigDecimal totalAmount = BigDecimal.ZERO;
             for (OrderItem itemDTO : orderRequestDTO.getItems()) {
@@ -54,8 +59,10 @@ public class OrderService {
                     }).toList();
             order.setItems(orderItems);
             order.setTotalAmount(totalAmount);
+            LOGGER.info("Order Placed Succcessfully", order);
             return ResponseEntity.ok(orderRepository.save(order));
         } else
+            LOGGER.warn("Customer Not Found");
             return new ResponseEntity<>("Customer Not Found", HttpStatus.NOT_FOUND);
     }
 
@@ -68,6 +75,7 @@ public class OrderService {
     }
 
     public ResponseEntity<?> getOrderByCustomerId(Long customerId) {
+        LOGGER.info("Get Order By Customer Id", customerId);
         List<Order> order = orderRepository.findByCustomerIdOrderByOrderDateDesc(customerId);
         if (!order.isEmpty())
             return ResponseEntity.ok(orderRepository.findByCustomerIdOrderByOrderDateDesc(customerId));
@@ -76,6 +84,7 @@ public class OrderService {
     }
 
     public ResponseEntity<?> updateOrderStatus(UUID id, String status) {
+        LOGGER.info("Update Order Status", id, status);
         Optional<Order> order = orderRepository.findById(id);
         if (order.isPresent()) {
             order.get().setStatus(status);
